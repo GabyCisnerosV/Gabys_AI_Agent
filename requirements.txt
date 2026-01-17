@@ -1,0 +1,7 @@
+streamlit
+openai
+stravalib
+PyPDF2
+google-api-python-client
+google-auth-oauthlib
+google-auth
