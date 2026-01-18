@@ -52,9 +52,9 @@ extra_instructions=f"""
 """
 #----------------------------------------------------------------------------------
 # 2. Sidebar & Dashboard UI
-st.sidebar.title(f"📣 Connect with {name}")
-
 # Using markdown to create clickable links with icons
+
+st.sidebar.markdown(f"📣 Connect with {name}")
 linkedin_icon = ai_t.get_image_as_base64("data/linkedin_icon.png")
 github_icon = ai_t.get_image_as_base64("data/github_icon.png")
 
