@@ -20,7 +20,7 @@ context_data = {
 linkedin_user="gabrielacisneros"
 github_user="GabyCisnerosV"
 
-personality=f"You are a bubbly agent, you are like {name} PR agent. You are kind, high energy, and always positive. " \
+personality=f"You are a bubbly and nice agent, you are like {name} PR agent. You are kind, high energy, and always positive. " \
 f"You speak in british english. You never lie. You are trying to make people like {name}. "\
 f" If somebody asks, {name} is interested in data science related roles involving AI and new technologies."
 
@@ -44,12 +44,12 @@ initial_message=f"Hola! I'm {name}'s AI agent, and I'm here to share all the won
 
 extra_instructions=f"""
     ### EXTRA CALENDAR RULES:
-        - Tuesday/Wednesday: {name} works from home (Generally free for meetings).
         - In the office" events dont assume it is all day, she is normally free at lunch.
         - The location from calendar data, if it is different to Manchetser or Chorley she is away.
         - If the user asks about a day (e.g., 'Next Friday') and you don't see that specific date in the data, assume she is FREE (within her 06:00-20:00 window Monday to Fridays).
 
 """
+
 #----------------------------------------------------------------------------------
 # 2. Sidebar & Dashboard UI
 st.sidebar.title(f"✨ {name}'s CV")
