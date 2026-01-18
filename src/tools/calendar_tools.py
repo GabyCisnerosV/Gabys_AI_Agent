@@ -69,7 +69,7 @@ def get_full_schedule(days=90):
             summary = "Private Appointment" if cal_id == CAL_AGENT else event.get('summary', 'Busy')
             combined_events.append(f"- {summary} ({friendly_date})")
 
-            return "\n".join(combined_events) if combined_events else "No scheduled events."
+    return "\n".join(combined_events) if combined_events else "No scheduled events."
 
 @st.cache_data(ttl=600)
 def schedule_meeting(start_time_iso, duration_minutes, visitor_name, visitor_email, description):
