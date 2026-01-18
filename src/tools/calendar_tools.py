@@ -15,6 +15,7 @@ CAL_MAIN = st.secrets["calendar_selection"]["cal_main"]
 CAL_NORMAL_DAYS = st.secrets["calendar_selection"]["cal_normal_days"]
 CAL_AGENT = st.secrets["calendar_selection"]["cal_agent"]
 
+@st.cache_data(ttl=600)
 def get_calendar_credentials():
     """Handles authentication and returns valid credentials."""
     creds = None
@@ -40,6 +41,7 @@ def get_calendar_credentials():
                 return None
     return creds
 
+@st.cache_data(ttl=600)
 def get_next_events():
     """Fetches upcoming events with privacy filters."""
     creds = get_calendar_credentials()
@@ -66,6 +68,7 @@ def get_next_events():
     except Exception as e:
         return f"Error: {e}"
 
+@st.cache_data(ttl=600)
 def schedule_meeting(start_time_iso, duration_minutes, visitor_name, visitor_email, description):
     """Books an appointment after checking all calendars for conflicts."""
     creds = get_calendar_credentials()

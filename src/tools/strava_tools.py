@@ -5,6 +5,7 @@ import logging
 # Keep the logs clean
 logging.getLogger().setLevel(logging.ERROR)
 
+@st.cache_data(ttl=600)
 def get_strava_stats():
     """
     Connects to Strava and returns a string summarizing Gaby's latest activity.
