@@ -71,28 +71,30 @@ st.sidebar.markdown(
 st.title(f"🤖 {name}'s Agent")
 st.write(agents_description)
 
-# 1. Initialize chat history if it doesn't exist
+# A. Initialize chat history if it doesn't exist
 if "messages" not in st.session_state:
+    # We add a 'system' message that the user NEVER sees, 
+    # but the AI reads every single time.
     st.session_state.messages = [
-        {"role": "assistant", "content":initial_message}
+        {"role": "system", "content": f"{personality} IMPORTANT: You have already introduced yourself as {name}'s agent. Do not introduce yourself again. If the user hasn't provided their name yet, try to find a natural way to ask, but don't be repetitive."},
+        {"role": "assistant", "content": initial_message}
     ]
 
 # Display chat messages from history on app rerun
+# IMPORTANT: Skip the 'system' message so the user doesn't see the instructions!
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.markdown(message["content"])
+    if message["role"] != "system":  # <--- Add this check
+        with st.chat_message(message["role"]):
+            st.markdown(message["content"])
 
-# React to user input
+# B. React to user input
 if prompt := st.chat_input("Say something..."):
-    # Display user message in chat message container
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    # Get the AI response using your modular function
-    with st.spinner("Give me a sec, I'm thinking..."):
-        response = ai_t.get_agent_response(prompt, context_data, personality, name)
+    with st.spinner("Thinking..."):
+        response = ai_t.get_agent_response(st.session_state.messages,context_data,personality,name)
     
-    # Display assistant response in chat message container
     with st.chat_message("assistant"):
         st.markdown(response)
     st.session_state.messages.append({"role": "assistant", "content": response})

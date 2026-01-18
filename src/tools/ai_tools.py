@@ -15,7 +15,7 @@ def get_cv_text(pdf_path):
     except Exception as e:
         return f"Error reading CV: {e}"
 
-def get_agent_response(user_query, data_bundle, personality,name):
+def get_agent_response(messages, data_bundle, personality,name):
     """
     data_bundle should be a dict were the key is a description NAME: Description of the source and the values are the souces
     """
@@ -26,15 +26,17 @@ def get_agent_response(user_query, data_bundle, personality,name):
     This is what you know: {data_bundle}
     
     Personality: {personality}.
+    "Instructions: Be conversational. If the user shares their name, remember it. "
+    "Don't repeat your intro if you've already said hello."
     """
     
-    response = client.chat.completions.create(
-        model="gpt-4o-mini",
-        messages=[
-            {"role": "system", "content": context},
-            {"role": "user", "content": user_query}
-        ]
-    )
+    # We replace the first message (system) with this detailed version
+    messages_for_api = [{"role": "system", "content": context}] + \
+                       [m for m in messages if m["role"] != "system"]
+
+    # Call OpenAI with the FULL history
+    response = client.chat.completions.create(model="gpt-4o-mini",messages=messages_for_api)
+    
     return response.choices[0].message.content
 
 def download_file_button(path,filename,object,name):
