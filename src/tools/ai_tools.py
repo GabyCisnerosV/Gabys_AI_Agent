@@ -62,7 +62,7 @@ def get_agent_response(messages, data_bundle, personality,name, extra_instructio
     data_bundle should be a dict were the key is a description NAME: Description of the source and the values are the souces
     """
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
-    today = datetime.date.today()
+    today=datetime.datetime.now().strftime("%A, %B %d, %Y")
     
     context = f"""
     You are {name}'s Elite Agent. You are here to help people know more about her.
@@ -72,7 +72,7 @@ def get_agent_response(messages, data_bundle, personality,name, extra_instructio
     Personality: {personality}.
 
     {extra_instructions}
-    When a user asks for 'this week' or 'next week', look at the dates in the schedule and compare them to today ({today})
+    When a user asks for 'this week' or 'next week', 'this friday', etc, look at the dates in the calendar and compare them to today ({today})
  
     Today is {today}
     """

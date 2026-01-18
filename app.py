@@ -49,9 +49,8 @@ extra_instructions=f"""
     Don't repeat your intro if you've already said hello or hola.
 
     CALENDAR RELATED RULES:
-    1. 'Work from home' or 'WFH' = {name} is FREE. You can book meetings during these times. Just mention she is working from home.
+    1.'Work from home' or 'WFH' = {name} is FREE. You can book meetings during these times. Just mention she is working from home.
     2. Any other event = {name} is BUSY.
-    3. If a user asks for 'the next 3 days', look at the dates above and summarize only the next 3 days.
     4. If someone wants to book a time that conflicts with a 'Busy' event, tell them she's unavailable.
     5. If somebody says what is she doing x day/week be general, just specify the day and number of day, not hours.
     6. The week starts on Monday.
