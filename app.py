@@ -65,7 +65,7 @@ ai_t.download_file_button(path=cv_path,filename=cv_filename,object="CV",name=nam
 
 st.sidebar.markdown(
     f"""
-    <div style="display: flex; flex-direction: column; gap: 15px;">
+    <div style="display: flex; flex-direction: column; gap: 5px;">
         <a href="https://www.linkedin.com/in/{linkedin_user}/" target="_blank" style="text-decoration: none; color: inherit;">
             <img src="data:image/png;base64,{linkedin_icon}" width="25" style="vertical-align:middle;"> 
             <span style="margin-left: 10px; font-weight: 500;">LinkedIn</span>
