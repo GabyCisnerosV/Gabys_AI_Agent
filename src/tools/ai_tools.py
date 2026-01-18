@@ -1,12 +1,14 @@
 import PyPDF2
 from openai import OpenAI
 import streamlit as st
+import os
 import json
 import base64
 import datetime
 from src.tools.calendar_tools import schedule_meeting
 from src.tools.definitions import AGENT_TOOLS
 
+@st.cache_data
 def get_cv_text(pdf_path):
     """Extracts text from PDF CV."""
     text = ""
@@ -18,14 +20,23 @@ def get_cv_text(pdf_path):
         return text
     except Exception as e:
         return f"Error reading CV: {e}"
-    
-def read_text_file(path):
-    """Safely reads a plain text file."""
+
+@st.cache_data
+def read_text_file(relative_path):
+    """
+    Automatically handles relative paths and reads text files.
+    """
     try:
-        with open(path, "r", encoding="utf-8") as f:
+        # 1. Get the absolute path to the project root
+        base_path = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+        full_path = os.path.join(base_path, relative_path)
+
+        with open(full_path, "r", encoding="utf-8") as f:
             return f.read()
+    except FileNotFoundError:
+        return f"Error: The file at {relative_path} was not found."
     except Exception as e:
-        return f"Error reading text file: {e}"
+        return f"Error: {e}"
 
 def handle_tool_call(tool_call):
     """
