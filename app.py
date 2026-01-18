@@ -52,15 +52,16 @@ extra_instructions=f"""
 """
 #----------------------------------------------------------------------------------
 # 2. Sidebar & Dashboard UI
-st.sidebar.title(f"✨ {name}'s CV")
-ai_t.download_file_button(path=cv_path,filename=cv_filename,object="CV",name=name)
-
-st.sidebar.write("---") # separator line
-st.sidebar.header(f"📣 Connect with {name}")
+st.sidebar.title(f"📣 Connect with {name}")
 
 # Using markdown to create clickable links with icons
 linkedin_icon = ai_t.get_image_as_base64("data/linkedin_icon.png")
 github_icon = ai_t.get_image_as_base64("data/github_icon.png")
+
+st.sidebar.write("---") # separator line
+
+st.sidebar.markdown(f"✨ {name}'s CV")
+ai_t.download_file_button(path=cv_path,filename=cv_filename,object="CV",name=name)
 
 st.sidebar.markdown(
     f"""
