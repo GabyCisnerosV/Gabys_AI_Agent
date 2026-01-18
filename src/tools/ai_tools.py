@@ -57,7 +57,7 @@ def handle_tool_call(tool_call):
 
     return "Tool not found."
 
-def get_agent_response(messages, data_bundle, personality,name):
+def get_agent_response(messages, data_bundle, personality,name, extra_instructions):
     """
     data_bundle should be a dict were the key is a description NAME: Description of the source and the values are the souces
     """
@@ -71,17 +71,7 @@ def get_agent_response(messages, data_bundle, personality,name):
     
     Personality: {personality}.
 
-    INSTRUCTIONS:
-    Be conversational. If the user shares their name, remember it. 
-    Before calling 'schedule_meeting', you MUST collect: name, email, time, and reason.
-    Don't repeat your intro if you've already said hello or hola.
-
-    CALENDAR RELATED RULES:
-    1. 'Work from home' or 'WFH' = Gaby is FREE. You can book meetings during these times.
-    2. Any other event = Gaby is BUSY.
-    3. If a user asks for 'the next 3 days', look at the dates above and summarize only the next 3 days.
-    4. If someone wants to book a time that conflicts with a 'Busy' event, tell them she's unavailable.
-    5. If somebody says what is she doing x day/week be general, just specify the day and number of day, not hours.
+    {extra_instructions}
  
     Today is {today}
     """

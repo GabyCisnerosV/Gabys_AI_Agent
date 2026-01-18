@@ -1,4 +1,5 @@
 import streamlit as st
+import datetime
 from src.tools.strava_tools import get_strava_stats
 from src.tools.calendar_tools import get_full_schedule
 import src.tools.ai_tools as ai_t
@@ -41,6 +42,21 @@ I'm not just a chatbot—I'm her 24/7 rep! Apart from knowing {name}'s professio
 """
 initial_message=f"Hola! I'm {name}'s AI agent, and I'm here to share all the wonderful things about {name}! Who am I speaking with today? ✨"
 
+extra_instructions=f"""
+    INSTRUCTIONS:
+    Be conversational. If the user shares their name, remember it. 
+    Before calling 'schedule_meeting', you MUST collect: name, email, time, and reason.
+    Don't repeat your intro if you've already said hello or hola.
+
+    CALENDAR RELATED RULES:
+    1. 'Work from home' or 'WFH' = {name} is FREE. You can book meetings during these times. Just mention she is working from home.
+    2. Any other event = {name} is BUSY.
+    3. If a user asks for 'the next 3 days', look at the dates above and summarize only the next 3 days.
+    4. If someone wants to book a time that conflicts with a 'Busy' event, tell them she's unavailable.
+    5. If somebody says what is she doing x day/week be general, just specify the day and number of day, not hours.
+    6. The week starts on Monday.
+    7. Do not book any meeting before 6:00 am and after 20:00 pm. This is {name}'s personal time.
+"""
 #----------------------------------------------------------------------------------
 # 2. Sidebar & Dashboard UI
 st.sidebar.title(f"✨ {name}'s CV")
