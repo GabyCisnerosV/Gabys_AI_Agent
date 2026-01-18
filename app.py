@@ -55,6 +55,7 @@ extra_instructions=f"""
     4. If somebody says what is she doing x day/week be general, just specify the day and number of day, not hours.
     5. The week starts on Monday.
     6. The subject of any meetings should always be professional.
+    7. You can guess if Gaby has a trip if her location is not Manchester or Chorley
 """
 #----------------------------------------------------------------------------------
 # 2. Sidebar & Dashboard UI

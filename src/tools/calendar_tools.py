@@ -55,34 +55,40 @@ def get_full_schedule(days=90):
     
     for cal_id in [CAL_MAIN, CAL_NORMAL_DAYS, CAL_AGENT]:
         try:
+            # We increase maxResults to 500 to make sure nothing is left out
             result = service.events().list(
                 calendarId=cal_id, timeMin=start_iso, timeMax=end_iso,
-                singleEvents=True, orderBy='startTime'
+                singleEvents=True, orderBy='startTime', maxResults=500
             ).execute()
             
             for event in result.get('items', []):
-                start_raw = event['start'].get('dateTime', event['start'].get('date'))
-                end_raw = event['end'].get('dateTime', event['end'].get('date'))
+                # FIX: Check for 'date' if 'dateTime' is missing (All-Day Events)
+                start_info = event['start'].get('dateTime') or event['start'].get('date')
+                end_info = event['end'].get('dateTime') or event['end'].get('date')
                 
-                # Parsing dates
-                dt_start = datetime.datetime.fromisoformat(start_raw.replace('Z', '+00:00'))
-                dt_end = datetime.datetime.fromisoformat(end_raw.replace('Z', '+00:00'))
+                if not start_info: continue
+
+                # Determine if it's an all-day event for the friendly label
+                is_all_day = 'T' not in start_info
                 
-                friendly_start = dt_start.strftime("%A, %d %B %Y at %H:%M")
-                friendly_end = dt_end.strftime("%H:%M")
-                
-                # PLACE/LOCATION logic
-                location = event.get('location', 'No location specified')
-                
+                if is_all_day:
+                    dt_start = datetime.datetime.strptime(start_info, '%Y-%m-%d')
+                    time_label = "All Day"
+                else:
+                    dt_start = datetime.datetime.fromisoformat(start_info.replace('Z', '+00:00'))
+                    dt_end = datetime.datetime.fromisoformat(end_info.replace('Z', '+00:00'))
+                    time_label = f"{dt_start.strftime('%H:%M')} to {dt_end.strftime('%H:%M')}"
+
+                friendly_date = dt_start.strftime("%A, %d %B %Y")
+                location = event.get('location', 'No location')
                 summary = "Private Appointment" if cal_id == CAL_AGENT else event.get('summary', 'Busy')
                 
-                # Adding location to the string so the Agent knows where you are
-                combined_events.append(f"- {summary} ({friendly_start} to {friendly_end}) | Location: {location}")
+                combined_events.append(f"- {summary} on {friendly_date} ({time_label}) | Place: {location}")
         except:
             continue
 
     combined_events.sort()
-    return "\n".join(combined_events) if combined_events else "No scheduled events."
+    return "\n".join(combined_events) if combined_events else "Gaby is fully free."
 
 @st.cache_data(ttl=600)
 def schedule_meeting(start_time_iso, duration_minutes, visitor_name, visitor_email, description):

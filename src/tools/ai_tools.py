@@ -74,6 +74,7 @@ def get_agent_response(messages, data_bundle, personality,name, extra_instructio
     {extra_instructions}
     If the user asks about a day (e.g., 'Next Friday') and you don't see that specific date in the data, assume she is FREE (within her 06:00-20:00 window).
     Check the year and date carefully against Today's Date ({today})
+    Don't book any appointments when in the calendar she has an event all day.
     Today is {today}
     """
     
