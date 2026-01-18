@@ -53,19 +53,13 @@ extra_instructions=f"""
 #----------------------------------------------------------------------------------
 # 2. Sidebar & Dashboard UI
 # Using markdown to create clickable links with icons
-
 st.sidebar.markdown(f"📣 Connect with {name}")
 linkedin_icon = ai_t.get_image_as_base64("data/linkedin_icon.png")
 github_icon = ai_t.get_image_as_base64("data/github_icon.png")
 
-st.sidebar.write("---") # separator line
-
-st.sidebar.markdown(f"✨ {name}'s CV")
-ai_t.download_file_button(path=cv_path,filename=cv_filename,object="CV",name=name)
-
 st.sidebar.markdown(
     f"""
-    <div style="display: flex; flex-direction: column; gap: 5px;">
+    <div style="display: flex; flex-direction: column; gap: 15px;">
         <a href="https://www.linkedin.com/in/{linkedin_user}/" target="_blank" style="text-decoration: none; color: inherit;">
             <img src="data:image/png;base64,{linkedin_icon}" width="25" style="vertical-align:middle;"> 
             <span style="margin-left: 10px; font-weight: 500;">LinkedIn</span>
@@ -79,6 +73,10 @@ st.sidebar.markdown(
     unsafe_allow_html=True
 )
 
+st.sidebar.write("---") # separator line
+
+st.sidebar.markdown(f"✨ {name}'s CV")
+ai_t.download_file_button(path=cv_path,filename=cv_filename,object="CV",name=name)
 #----------------------------------------------------------------------------------
 # 3. Chat interface
 
