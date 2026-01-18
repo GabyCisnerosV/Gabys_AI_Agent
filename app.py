@@ -49,12 +49,11 @@ extra_instructions=f"""
     Don't repeat your intro if you've already said hello or hola.
 
     CALENDAR RELATED RULES:
-    1.'Work from home' or 'WFH' = {name} is FREE. You can book meetings during these times. Just mention she is working from home.
-    2. Any other event = {name} is BUSY.
-    4. If someone wants to book a time that conflicts with a 'Busy' event, tell them she's unavailable.
-    5. If somebody says what is she doing x day/week be general, just specify the day and number of day, not hours.
-    6. The week starts on Monday.
-    7. Do not book any meeting before 6:00 am and after 20:00 pm. This is {name}'s personal time.
+    1. Tuesday and Wednesday she works from home. You can book meetings these days when there is no other event.
+    2. If someone wants to book a time that conflicts with a 'Busy' event, tell them she's unavailable.
+    3. If somebody says what is she doing x day/week be general, just specify the day and number of day, not hours.
+    4. The week starts on Monday.
+    5. Do not book any meeting before 6:00 am and after 20:00 pm. This is {name}'s personal time.
 """
 #----------------------------------------------------------------------------------
 # 2. Sidebar & Dashboard UI

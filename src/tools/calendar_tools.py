@@ -62,12 +62,14 @@ def get_full_schedule(days=90):
         for event in result.get('items', []):
             start_raw = event['start'].get('dateTime', event['start'].get('date'))
             dt = datetime.datetime.fromisoformat(start_raw.replace('Z', ''))
-            friendly_date = dt.strftime("%A, %b %d at %H:%M")
-            summary = "Private Appointment" if cal_id == CAL_AGENT else event.get('summary', 'Busy')
+
+            # Adding the year makes the date "un-hallucinatable"
+            friendly_date = dt.strftime("%A, %d %B %Y at %H:%M") 
             
+            summary = "Private Appointment" if cal_id == CAL_AGENT else event.get('summary', 'Busy')
             combined_events.append(f"- {summary} ({friendly_date})")
 
-    return "\n".join(combined_events) if combined_events else "No scheduled events."
+            return "\n".join(combined_events) if combined_events else "No scheduled events."
 
 @st.cache_data(ttl=600)
 def schedule_meeting(start_time_iso, duration_minutes, visitor_name, visitor_email, description):
@@ -84,15 +86,7 @@ def schedule_meeting(start_time_iso, duration_minutes, visitor_name, visitor_ema
         for cal_id in [CAL_MAIN, CAL_NORMAL_DAYS, CAL_AGENT]:
             check = service.events().list(calendarId=cal_id, timeMin=start_time_iso, timeMax=end_time_iso).execute()
             items = check.get('items', [])
-            
-            # Only block if the event is NOT "Work from home"
-            real_conflicts = [
-                i for i in items 
-                if "work from home" not in i.get('summary', '').lower() 
-                and "wfh" not in i.get('summary', '').lower()
-            ]
-            
-            if real_conflicts:
+            if items:
                 return "Gaby is busy at that time. Try another slot!"
 
         # Create Event
