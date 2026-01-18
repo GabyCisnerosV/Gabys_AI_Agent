@@ -49,7 +49,6 @@ def get_full_schedule(days=90):
     
     service = build('calendar', 'v3', credentials=creds)
     now = datetime.datetime.utcnow()
-    # Start from the beginning of today
     start_iso = now.replace(hour=0, minute=0, second=0).isoformat() + 'Z'
     end_iso = (now + datetime.timedelta(days=days)).isoformat() + 'Z'
 
@@ -63,7 +62,6 @@ def get_full_schedule(days=90):
         for event in result.get('items', []):
             start_raw = event['start'].get('dateTime', event['start'].get('date'))
             dt = datetime.datetime.fromisoformat(start_raw.replace('Z', ''))
-
             friendly_date = dt.strftime("%A, %b %d at %H:%M")
             summary = "Private Appointment" if cal_id == CAL_AGENT else event.get('summary', 'Busy')
             
@@ -73,27 +71,34 @@ def get_full_schedule(days=90):
 
 @st.cache_data(ttl=600)
 def schedule_meeting(start_time_iso, duration_minutes, visitor_name, visitor_email, description):
-    """Books an appointment after checking all calendars for conflicts."""
     creds = get_calendar_credentials()
     if not creds: return "Calendar access denied."
 
     try:
         service = build('calendar', 'v3', credentials=creds)
         start_dt = datetime.datetime.fromisoformat(start_time_iso.replace('Z', ''))
-        # Using timedelta correctly
         end_dt = start_dt + datetime.timedelta(minutes=int(duration_minutes))
         end_time_iso = end_dt.isoformat() + 'Z'
 
         # Conflict check
         for cal_id in [CAL_MAIN, CAL_NORMAL_DAYS, CAL_AGENT]:
             check = service.events().list(calendarId=cal_id, timeMin=start_time_iso, timeMax=end_time_iso).execute()
-            if check.get('items'):
+            items = check.get('items', [])
+            
+            # Only block if the event is NOT "Work from home"
+            real_conflicts = [
+                i for i in items 
+                if "work from home" not in i.get('summary', '').lower() 
+                and "wfh" not in i.get('summary', '').lower()
+            ]
+            
+            if real_conflicts:
                 return "Gaby is busy at that time. Try another slot!"
 
         # Create Event
         event_body = {
             'summary': f'Meeting with {visitor_name}',
-            'description': f"{description}\n\nBooked via AI Agent.",
+            'description': f"{description}\n\nBooked with Gaby's AI Agent ✨.",
             'start': {'dateTime': start_time_iso, 'timeZone': 'Europe/London'},
             'end': {'dateTime': end_time_iso, 'timeZone': 'Europe/London'},
             'attendees': [{'email': visitor_email}],

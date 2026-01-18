@@ -72,6 +72,7 @@ def get_agent_response(messages, data_bundle, personality,name, extra_instructio
     Personality: {personality}.
 
     {extra_instructions}
+    When a user asks for 'this week' or 'next week', look at the dates in the schedule and compare them to today ({today})
  
     Today is {today}
     """
