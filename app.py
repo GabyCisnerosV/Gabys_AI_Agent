@@ -3,6 +3,7 @@ from src.tools.strava_tool import get_strava_stats
 from src.tools.calendar_tool import get_next_events
 import src.tools.ai_tools as ai_t
 
+#----------------------------------------------------------------------------------
 # 1. Setup & Data
 name="Gaby"
 cv_path="data/Gaby_CV.pdf"
@@ -35,7 +36,9 @@ I'm not just a chatbot—I'm her 24/7 rep! Apart from knowing {name}'s professio
 
 *Feel free to ask me anything else!*
 """
+initial_message=f"Hola! I'm {name}'s AI agent, and I'm here to share all the wonderful things about {name}! Who am I speaking with today? ✨"
 
+#----------------------------------------------------------------------------------
 # 2. Sidebar & Dashboard UI
 st.sidebar.title(f"✨ {name}'s CV")
 ai_t.download_file_button(path=cv_path,filename=cv_filename,object="CV",name=name)
@@ -63,13 +66,17 @@ st.sidebar.markdown(
     unsafe_allow_html=True
 )
 
+#----------------------------------------------------------------------------------
 # 3. Chat interface
+
 st.title(f"🤖 {name}'s Agent")
 st.write(agents_description)
 
-# Initialize chat history so it doesn't disappear when you click things
+# 1. Initialize chat history if it doesn't exist
 if "messages" not in st.session_state:
-    st.session_state.messages = []
+    st.session_state.messages = [
+        {"role": "assistant", "content":initial_message}
+    ]
 
 # Display chat messages from history on app rerun
 for message in st.session_state.messages:
