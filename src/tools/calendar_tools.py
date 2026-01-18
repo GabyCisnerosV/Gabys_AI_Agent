@@ -165,7 +165,7 @@ def schedule_meeting(start_time_iso, duration_minutes, visitor_name, visitor_ema
         description_body = (
             f"👋 Meeting Request from {visitor_name}\n\n"
             f"📝 Reason for Meeting: \n{description}\n\n"
-            f"--- \n"
+            f"--- \n\n"
             f"✨ *Booked via Gaby's AI Agent.*"
         )
 
