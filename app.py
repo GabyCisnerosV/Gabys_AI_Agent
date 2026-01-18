@@ -95,7 +95,7 @@ if prompt := st.chat_input("Say something..."):
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})
 
-    with st.spinner("Thinking..."):
+    with st.spinner("Give me a sec..."):
         response = ai_t.get_agent_response(st.session_state.messages,context_data,personality,name)
     
     with st.chat_message("assistant"):
