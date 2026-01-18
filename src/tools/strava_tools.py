@@ -1,14 +1,6 @@
 import streamlit as st
 from stravalib.client import Client
 import logging
-
-# Keep the logs clean
-logging.getLogger().setLevel(logging.ERROR)
-
-@st.cache_data(ttl=600)
-import streamlit as st
-from stravalib.client import Client
-import logging
 import datetime
 
 # Keep the logs clean
