@@ -107,7 +107,6 @@ def schedule_meeting(start_time_iso, duration_minutes, visitor_name, visitor_ema
         end_dt = start_dt + datetime.timedelta(minutes=int(duration_minutes))
         
         # SEARCH WINDOW: We look for ANY event that overlaps this time
-        # Google's 'freebusy' is better for this
         body = {
             "timeMin": start_dt.isoformat(),
             "timeMax": end_dt.isoformat(),
@@ -116,9 +115,26 @@ def schedule_meeting(start_time_iso, duration_minutes, visitor_name, visitor_ema
         
         busy_check = service.freebusy().query(body=body).execute()
         
+        # Check each calendar for conflicts
         for cal_id in [CAL_MAIN, CAL_NORMAL_DAYS, CAL_AGENT]:
             if busy_check['calendars'][cal_id]['busy']:
-                return "Gaby is busy or in the office at that time. Please try another slot!"
+                # Fetch the actual events to inspect what they are
+                events_result = service.events().list(
+                    calendarId=cal_id,
+                    timeMin=start_dt.isoformat(),
+                    timeMax=end_dt.isoformat(),
+                    singleEvents=True
+                ).execute()
+                
+                for event in events_result.get('items', []):
+                    summary = event.get('summary', '').lower()
+                    
+                    # Ignore "in the office" events - these don't block meetings
+                    if 'in the office' in summary:
+                        continue
+                    
+                    # Any other event is a real conflict
+                    return "Gaby is busy at that time. Please try another slot!"
 
         # Create Event
         event_body = {
