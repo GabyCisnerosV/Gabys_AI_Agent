@@ -41,53 +41,48 @@ def get_calendar_credentials():
                 return None
     return creds
 
-
 @st.cache_data(ttl=600)
 def get_full_schedule(days=90):
     creds = get_calendar_credentials()
     if not creds: return "Calendar access unavailable."
     
     service = build('calendar', 'v3', credentials=creds)
-
     now = datetime.datetime.now(datetime.timezone.utc)
     start_iso = now.replace(hour=0, minute=0, second=0, microsecond=0).isoformat()
     end_iso = (now + datetime.timedelta(days=days)).isoformat()
 
     combined_events = []
     
-    # Check all three calendars
     for cal_id in [CAL_MAIN, CAL_NORMAL_DAYS, CAL_AGENT]:
         try:
             result = service.events().list(
-                calendarId=cal_id, 
-                timeMin=start_iso, 
-                timeMax=end_iso,
-                singleEvents=True, 
-                orderBy='startTime'
+                calendarId=cal_id, timeMin=start_iso, timeMax=end_iso,
+                singleEvents=True, orderBy='startTime'
             ).execute()
             
-            items = result.get('items', [])
-            for event in items:
+            for event in result.get('items', []):
                 start_raw = event['start'].get('dateTime', event['start'].get('date'))
-                # Handle different date formats from Google API
-                if 'T' in start_raw:
-                    dt = datetime.datetime.fromisoformat(start_raw.replace('Z', '+00:00'))
-                else:
-                    dt = datetime.datetime.strptime(start_raw, '%Y-%m-%d')
-
-                # Critical: Include Day, Date, Year, and Time
-                friendly_date = dt.strftime("%A, %d %B %Y at %H:%M") 
+                end_raw = event['end'].get('dateTime', event['end'].get('date'))
+                
+                # Parsing dates
+                dt_start = datetime.datetime.fromisoformat(start_raw.replace('Z', '+00:00'))
+                dt_end = datetime.datetime.fromisoformat(end_raw.replace('Z', '+00:00'))
+                
+                friendly_start = dt_start.strftime("%A, %d %B %Y at %H:%M")
+                friendly_end = dt_end.strftime("%H:%M")
+                
+                # PLACE/LOCATION logic
+                location = event.get('location', 'No location specified')
                 
                 summary = "Private Appointment" if cal_id == CAL_AGENT else event.get('summary', 'Busy')
-                combined_events.append(f"- {summary} ({friendly_date})")
-        except Exception as e:
-            # If one calendar fails, we continue to the next
+                
+                # Adding location to the string so the Agent knows where you are
+                combined_events.append(f"- {summary} ({friendly_start} to {friendly_end}) | Location: {location}")
+        except:
             continue
 
-    # Sort events by date so the AI sees them in chronological order
-    combined_events.sort(key=lambda x: x.split('(')[-1])
-
-    return "\n".join(combined_events) if combined_events else "Gaby has no scheduled events."
+    combined_events.sort()
+    return "\n".join(combined_events) if combined_events else "No scheduled events."
 
 @st.cache_data(ttl=600)
 def schedule_meeting(start_time_iso, duration_minutes, visitor_name, visitor_email, description):
@@ -97,7 +92,7 @@ def schedule_meeting(start_time_iso, duration_minutes, visitor_name, visitor_ema
     try:
         service = build('calendar', 'v3', credentials=creds)
         
-        # Clean the ISO string
+        # Standardizing the ISO format
         if start_time_iso.endswith('Z'):
             start_dt = datetime.datetime.fromisoformat(start_time_iso.replace('Z', '+00:00'))
         else:
@@ -105,33 +100,26 @@ def schedule_meeting(start_time_iso, duration_minutes, visitor_name, visitor_ema
             
         end_dt = start_dt + datetime.timedelta(minutes=int(duration_minutes))
         
-        #ISO format
-        start_iso = start_dt.isoformat()
-        if not start_iso.endswith('Z') and '+' not in start_iso:
-            start_iso += 'Z'
-            
-        end_iso = end_dt.isoformat()
-        if not end_iso.endswith('Z') and '+' not in end_iso:
-            end_iso += 'Z'
-
-        # Conflict check across all calendars
+        # SEARCH WINDOW: We look for ANY event that overlaps this time
+        # Google's 'freebusy' is better for this
+        body = {
+            "timeMin": start_dt.isoformat(),
+            "timeMax": end_dt.isoformat(),
+            "items": [{"id": CAL_MAIN}, {"id": CAL_NORMAL_DAYS}, {"id": CAL_AGENT}]
+        }
+        
+        busy_check = service.freebusy().query(body=body).execute()
+        
         for cal_id in [CAL_MAIN, CAL_NORMAL_DAYS, CAL_AGENT]:
-            check = service.events().list(
-                calendarId=cal_id, 
-                timeMin=start_iso, 
-                timeMax=end_iso,
-                singleEvents=True
-            ).execute()
-            
-            if check.get('items'):
-                return "Gaby is busy at that time. Try another slot!"
+            if busy_check['calendars'][cal_id]['busy']:
+                return "Gaby is busy or in the office at that time. Please try another slot!"
 
         # Create Event
         event_body = {
             'summary': f'Meeting with {visitor_name}',
             'description': f"{description}\n\nBooked with Gaby's AI Agent ✨.",
-            'start': {'dateTime': start_iso, 'timeZone': 'Europe/London'},
-            'end': {'dateTime': end_iso, 'timeZone': 'Europe/London'},
+            'start': {'dateTime': start_dt.isoformat(), 'timeZone': 'Europe/London'},
+            'end': {'dateTime': end_dt.isoformat(), 'timeZone': 'Europe/London'},
             'attendees': [{'email': visitor_email}],
         }
         
