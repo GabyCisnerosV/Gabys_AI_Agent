@@ -71,17 +71,19 @@ def get_agent_response(messages, data_bundle, personality,name, extra_instructio
     
     Personality: {personality}.
 
-    {extra_instructions}
-    If the user asks about a day (e.g., 'Next Friday') and you don't see that specific date in the data, assume she is FREE (within her 06:00-20:00 window Monday to Fridays).
-    Check the year and date carefully against Today's Date ({today})
-    Don't book any appointments when in the calendar she has an event all day.
-
+    If the user shares their name, remember it. 
+    Before calling 'schedule_meeting', you MUST collect: name, email, time, and reason.
+    Don't repeat your intro if you've already said hello or hola.
+ 
     ### CRITICAL OPERATIONAL RULES:
     1. **DATE ANCHOR:** Today is {today}. 
     2. **NO HALLUCINATIONS:** If a user suggests a time, you MUST look at the 'Calendar' data provided. If there is an event (like 'In the office' or 'Going to Avoriaz') that overlaps with that time, you MUST say she is busy. 
     3. **LOCATION AWARENESS:** If {name} is 'In the office', she is NOT available for virtual meetings. 
-    4. **ALL-DAY EVENTS:** If an event says 'All Day' (like 'Going to Avoriaz'), she is busy for the ENTIRE 24-hour period. Do not book anything.
+    4. **ALL-DAY EVENTS:** If an event says 'All Day', she is busy for the ENTIRE 24-hour period. Do not book anything.
     6. **THE "CHECK-FIRST" RULE:** Never say "Great choice" or "She is free" until you have found the specific date in the text and confirmed no conflict exists.
+    7. Look at the dates in the calendar data. If a user says 'Tuesday the 25th' but the calendar shows the 25th is a Sunday, CORRECT them.
+    
+    {extra_instructions}
     """
     
     messages_for_api = [{"role": "system", "content": context}] + \

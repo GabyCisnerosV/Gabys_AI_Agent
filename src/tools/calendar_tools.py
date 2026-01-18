@@ -55,10 +55,13 @@ def get_full_schedule(days=90):
     
     for cal_id in [CAL_MAIN, CAL_NORMAL_DAYS, CAL_AGENT]:
         try:
-            # We increase maxResults to 500 to make sure nothing is left out
             result = service.events().list(
-                calendarId=cal_id, timeMin=start_iso, timeMax=end_iso,
-                singleEvents=True, orderBy='startTime', maxResults=500
+                calendarId=cal_id, 
+                timeMin=start_iso, 
+                timeMax=end_iso,
+                singleEvents=True, 
+                orderBy='startTime', 
+                maxResults=1000
             ).execute()
             
             for event in result.get('items', []):
@@ -68,23 +71,34 @@ def get_full_schedule(days=90):
                 
                 if not start_info: continue
 
-                # Determine if it's an all-day event for the friendly label
+                # Determine if it's an all-day event
                 is_all_day = 'T' not in start_info
                 
                 if is_all_day:
                     dt_start = datetime.datetime.strptime(start_info, '%Y-%m-%d')
-                    time_label = "All Day"
+                    # For all-day events, end date is exclusive, so subtract 1 day
+                    dt_end = datetime.datetime.strptime(end_info, '%Y-%m-%d') - datetime.timedelta(days=1)
+                    
+                    # If it's a multi-day event, show the range
+                    if dt_start.date() == dt_end.date():
+                        time_label = "**ALL DAY**"
+                        friendly_date = dt_start.strftime("%A, %d %B %Y")
+                    else:
+                        time_label = "**ALL DAY (MULTI-DAY EVENT)**"
+                        friendly_date = f"{dt_start.strftime('%A, %d %B %Y')} to {dt_end.strftime('%A, %d %B %Y')}"
                 else:
                     dt_start = datetime.datetime.fromisoformat(start_info.replace('Z', '+00:00'))
                     dt_end = datetime.datetime.fromisoformat(end_info.replace('Z', '+00:00'))
                     time_label = f"{dt_start.strftime('%H:%M')} to {dt_end.strftime('%H:%M')}"
+                    friendly_date = dt_start.strftime("%A, %d %B %Y")
 
-                friendly_date = dt_start.strftime("%A, %d %B %Y")
                 location = event.get('location', 'No location')
                 summary = "Private Appointment" if cal_id == CAL_AGENT else event.get('summary', 'Busy')
                 
                 combined_events.append(f"- {summary} on {friendly_date} ({time_label}) | Place: {location}")
-        except:
+        except Exception as e:
+            # Add error logging to debug
+            print(f"Error fetching calendar {cal_id}: {e}")
             continue
 
     combined_events.sort()

@@ -43,18 +43,12 @@ I'm not just a chatbot—I'm her 24/7 rep! Apart from knowing {name}'s professio
 initial_message=f"Hola! I'm {name}'s AI agent, and I'm here to share all the wonderful things about {name}! Who am I speaking with today? ✨"
 
 extra_instructions=f"""
-    INSTRUCTIONS:
-    Be conversational. If the user shares their name, remember it. 
-    Before calling 'schedule_meeting', you MUST collect: name, email, time, and reason.
-    Don't repeat your intro if you've already said hello or hola.
-
-    CRITICAL CALENDAR RULES:
-        - Always, always check the calendar before agreeing on a date.
+    ### EXTRA CALENDAR RULES:
         - Tuesday/Wednesday: {name} works from home (Generally free for meetings).
         - In the office" events dont assume it is all day, she is normally free at lunch.
-        - If an event says 'All Day' AND is something like a trip or vacation, she is 100% busy.
-        - Look at the dates in the calendar data. If a user says 'Tuesday the 25th' but the calendar shows the 25th is a Sunday, CORRECT them.
-        - Do not guess availability. If it's not in the data, ask for clarification.
+        - The location from calendar data, if it is different to Manchetser or Chorley she is away.
+        - If the user asks about a day (e.g., 'Next Friday') and you don't see that specific date in the data, assume she is FREE (within her 06:00-20:00 window Monday to Fridays).
+
 """
 #----------------------------------------------------------------------------------
 # 2. Sidebar & Dashboard UI
