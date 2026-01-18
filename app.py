@@ -1,18 +1,21 @@
 import streamlit as st
-from src.tools.strava_tool import get_strava_stats
-from src.tools.calendar_tool import get_next_events
+from src.tools.strava_tools import get_strava_stats
+from src.tools.calendar_tools import get_next_events
 import src.tools.ai_tools as ai_t
 
 #----------------------------------------------------------------------------------
 # 1. Setup & Data
 name="Gaby"
 cv_path="data/Gaby_CV.pdf"
+personal_facts="data/Gaby_Mind.txt"
 cv_filename="Gaby_Cisneros_V.pdf"
 context_data = {
     f"CV: This is {name}'s updated CV": ai_t.get_cv_text(cv_path),
     f"Strava: {name}'s recent fitness and running stats": get_strava_stats(),
-    f"Calendar: {name}'s upcoming availability and meetings": get_next_events()
+    f"Calendar: {name}'s upcoming availability and meetings": get_next_events(),
+    f"{name}'s facts":personal_facts
 }
+
 linkedin_user="gabrielacisneros"
 github_user="GabyCisnerosV"
 
