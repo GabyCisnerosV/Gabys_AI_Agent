@@ -13,7 +13,7 @@ context_data = {
     f"CV: This is {name}'s updated CV": ai_t.get_cv_text(cv_path),
     f"Strava: {name}'s recent fitness and running stats": get_strava_stats(),
     f"Calendar: {name}'s upcoming availability and meetings": get_next_events(),
-    f"{name}'s facts":personal_facts
+    f"{name}'s facts":ai_t.read_text_file(personal_facts)
 }
 
 linkedin_user="gabrielacisneros"
