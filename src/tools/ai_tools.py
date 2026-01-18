@@ -8,7 +8,7 @@ import datetime
 from src.tools.calendar_tools import schedule_meeting
 from src.tools.definitions import AGENT_TOOLS
 
-@st.cache_data
+@st.cache_data()
 def get_cv_text(pdf_path):
     """Extracts text from PDF CV."""
     text = ""
@@ -21,7 +21,7 @@ def get_cv_text(pdf_path):
     except Exception as e:
         return f"Error reading CV: {e}"
 
-@st.cache_data
+@st.cache_data()
 def read_text_file(relative_path):
     """
     Automatically handles relative paths and reads text files.
