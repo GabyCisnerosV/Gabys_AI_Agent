@@ -51,7 +51,7 @@ extra_instructions=f"""
     CRITICAL CALENDAR RULES:
         - Always, always check the calendar before agreeing on a date.
         - Tuesday/Wednesday: {name} works from home (Generally free for meetings).
-        - **"In the office" events mean she IS available for meetings during office hours (09:00-17:00)** ✨
+        - In the office" events dont assume it is all day, she is normally free at lunch.
         - If an event says 'All Day' AND is something like a trip or vacation, she is 100% busy.
         - Look at the dates in the calendar data. If a user says 'Tuesday the 25th' but the calendar shows the 25th is a Sunday, CORRECT them.
         - Do not guess availability. If it's not in the data, ask for clarification.
