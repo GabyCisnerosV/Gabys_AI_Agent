@@ -88,7 +88,7 @@ def get_agent_response(messages, data_bundle, personality,name, extra_instructio
                        [m for m in messages if m["role"] != "system"]
 
     response = client.chat.completions.create(
-        model="gpt-4o-mini",
+        model="gpt-4o",
         messages=messages_for_api,
         tools=AGENT_TOOLS,
         tool_choice="auto"
