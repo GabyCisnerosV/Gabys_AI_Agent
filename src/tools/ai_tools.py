@@ -72,8 +72,8 @@ def get_agent_response(messages, data_bundle, personality,name, extra_instructio
     Personality: {personality}.
 
     {extra_instructions}
-    When a user asks for 'this week' or 'next week', 'this friday', etc, look at the dates in the calendar and compare them to today ({today})
- 
+    If the user asks about a day (e.g., 'Next Friday') and you don't see that specific date in the data, assume she is FREE (within her 06:00-20:00 window).
+    Check the year and date carefully against Today's Date ({today})
     Today is {today}
     """
     
