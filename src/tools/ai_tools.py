@@ -81,7 +81,7 @@ def get_agent_response(messages, data_bundle, personality,name):
     2. Any other event = Gaby is BUSY.
     3. If a user asks for 'the next 3 days', look at the dates above and summarize only the next 3 days.
     4. If someone wants to book a time that conflicts with a 'Busy' event, tell them she's unavailable.
-    5. If somebody says what is she doing x day/week be general, never specify times.
+    5. If somebody says what is she doing x day/week be general, just specify the day and number of day, not hours.
  
     Today is {today}
     """
