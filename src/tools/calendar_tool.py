@@ -13,33 +13,36 @@ SCOPES = ['https://www.googleapis.com/auth/calendar.readonly']
 def get_next_events():
     creds = None
     
-    # --- STEP 1: LOAD CREDENTIALS ---
-    # Check if we are running on Streamlit Cloud (using Secrets)
+    # 1. Try loading from Secrets (Cloud)
     if "google_calendar" in st.secrets:
-        # We store the google_calendar_token.json content inside a secret called 'token'
-        token_info = json.loads(st.secrets["google_calendar"]["token"])
+        token_data = st.secrets["google_calendar"]["token"]
+        # Handle case where it might already be a dict or still a string
+        token_info = json.loads(token_data) if isinstance(token_data, str) else token_data
         creds = Credentials.from_authorized_user_info(token_info, SCOPES)
         
-    # If not on Cloud, check for local google_calendar_token.json file
+    # 2. Try loading from Local File (Only if not on Cloud)
     elif os.path.exists('keys/google_calendar_token.json'):
         creds = Credentials.from_authorized_user_file('keys/google_calendar_token.json', SCOPES)
 
-    # --- STEP 2: REFRESH OR LOGIN ---
+    # 3. Refresh or Login logic
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
-            # THIS ONLY WORKS LOCALLY
-            # Ensure your .streamlit/google_calendar_credentials.json is correct
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'keys/google_calendar_credentials.json', SCOPES)
-            creds = flow.run_local_server(port=8080)
-        
-        # Save the token locally (helps for the very first time you run it)
-        with open('keys/google_calendar_token.json', 'w') as token:
-            token.write(creds.to_json())
+            # ONLY attempt local login if we are NOT on Streamlit Cloud
+            if "google_calendar" not in st.secrets:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    'keys/google_calendar_credentials.json', SCOPES)
+                creds = flow.run_local_server(port=8080)
+                
+                # Only try to save the file locally if the folder exists
+                if os.path.exists('keys'):
+                    with open('keys/google_calendar_token.json', 'w') as token:
+                        token.write(creds.to_json())
+            else:
+                return "Authentication failed: Please check Streamlit Secrets."
 
-    # --- STEP 3: FETCH EVENTS ---
+    # 4. Fetch the events
     try:
         service = build('calendar', 'v3', credentials=creds)
         now = datetime.datetime.utcnow().isoformat() + 'Z'
