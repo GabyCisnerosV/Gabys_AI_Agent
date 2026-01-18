@@ -76,7 +76,7 @@ if "messages" not in st.session_state:
     # We add a 'system' message that the user NEVER sees, 
     # but the AI reads every single time.
     st.session_state.messages = [
-        {"role": "system", "content": f"{personality} IMPORTANT: You have already introduced yourself as {name}'s agent. Do not introduce yourself again. If the user hasn't provided their name yet, try to find a natural way to ask, but don't be repetitive."},
+        {"role": "system", "content": f"{personality} IMPORTANT: You have already said hi and introduced yourself as {name}'s agent. Do not introduce yourself again. If the user hasn't provided their name yet, try to find a natural way to ask, but don't be repetitive."},
         {"role": "assistant", "content": initial_message}
     ]
 
