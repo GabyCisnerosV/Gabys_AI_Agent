@@ -163,14 +163,14 @@ def schedule_meeting(start_time_iso, duration_minutes, visitor_name, visitor_ema
 
         # Create Event
         description_body = (
-            f"👋 **Meeting Request from {visitor_name}**\n\n"
-            f"📝 **Reason for Meeting:**\n{description}\n\n"
+            f"👋 Meeting Request from {visitor_name}\n\n"
+            f"📝 Reason for Meeting: \n{description}\n\n"
             f"--- \n"
             f"✨ *Booked via Gaby's AI Agent.*"
         )
 
         event_body = {
-            'summary': f'🤝 {visitor_name} <> Gaby Cisneros V',
+            'summary': f'🤝 {visitor_name} x Gaby Cisneros V',
             'location': 'Google Meet (Link attached)',
             'description': description_body,
             'start': {'dateTime': start_dt.isoformat(), 'timeZone': 'Europe/London'},
