@@ -41,32 +41,35 @@ def get_calendar_credentials():
                 return None
     return creds
 
+
 @st.cache_data(ttl=600)
-def get_next_events():
-    """Fetches upcoming events with privacy filters."""
+def get_full_schedule(days=90):
     creds = get_calendar_credentials()
-    if not creds: return "Authentication failed."
+    if not creds: return "Calendar access unavailable."
+    
+    service = build('calendar', 'v3', credentials=creds)
+    now = datetime.datetime.utcnow()
+    # Start from the beginning of today
+    start_iso = now.replace(hour=0, minute=0, second=0).isoformat() + 'Z'
+    end_iso = (now + datetime.timedelta(days=days)).isoformat() + 'Z'
 
-    try:
-        service = build('calendar', 'v3', credentials=creds)
-        now = datetime.datetime.utcnow().isoformat() + 'Z'
-        event_summaries = []
+    combined_events = []
+    for cal_id in [CAL_MAIN, CAL_NORMAL_DAYS, CAL_AGENT]:
+        result = service.events().list(
+            calendarId=cal_id, timeMin=start_iso, timeMax=end_iso,
+            singleEvents=True, orderBy='startTime'
+        ).execute()
+        
+        for event in result.get('items', []):
+            start_raw = event['start'].get('dateTime', event['start'].get('date'))
+            dt = datetime.datetime.fromisoformat(start_raw.replace('Z', ''))
 
-        for cal_id in [CAL_MAIN, CAL_NORMAL_DAYS, CAL_AGENT]:
-            result = service.events().list(
-                calendarId=cal_id, timeMin=now,
-                maxResults=2, singleEvents=True, orderBy='startTime'
-            ).execute()
+            friendly_date = dt.strftime("%A, %b %d at %H:%M")
+            summary = "Private Appointment" if cal_id == CAL_AGENT else event.get('summary', 'Busy')
             
-            for event in result.get('items', []):
-                start = event['start'].get('dateTime', event['start'].get('date'))
-                # Masking private names from the Agent calendar
-                summary = "Private Appointment" if cal_id == CAL_AGENT else event.get('summary', 'No Title')
-                event_summaries.append(f"- {summary} (Starts: {start})")
+            combined_events.append(f"- {summary} ({friendly_date})")
 
-        return "Current Schedule:\n" + "\n".join(event_summaries) if event_summaries else "Clear schedule!"
-    except Exception as e:
-        return f"Error: {e}"
+    return "\n".join(combined_events) if combined_events else "No scheduled events."
 
 @st.cache_data(ttl=600)
 def schedule_meeting(start_time_iso, duration_minutes, visitor_name, visitor_email, description):

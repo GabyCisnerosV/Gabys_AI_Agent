@@ -1,6 +1,6 @@
 import streamlit as st
 from src.tools.strava_tools import get_strava_stats
-from src.tools.calendar_tools import get_next_events
+from src.tools.calendar_tools import get_full_schedule
 import src.tools.ai_tools as ai_t
 
 #----------------------------------------------------------------------------------
@@ -12,7 +12,7 @@ cv_filename="Gaby_Cisneros_V.pdf"
 context_data = {
     f"CV: This is {name}'s updated CV": ai_t.get_cv_text(cv_path),
     f"Strava: {name}'s recent fitness and running stats": get_strava_stats(),
-    f"Calendar: {name}'s upcoming availability and meetings": get_next_events(),
+    f"Calendar: {name}'s upcoming availability and meetings": get_full_schedule(),
     f"{name}'s facts":ai_t.read_text_file(personal_facts)
 }
 

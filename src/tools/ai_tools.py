@@ -71,10 +71,17 @@ def get_agent_response(messages, data_bundle, personality,name):
     
     Personality: {personality}.
 
-    Instructions: Be conversational. If the user shares their name, remember it. 
+    INSTRUCTIONS:
+    Be conversational. If the user shares their name, remember it. 
     Before calling 'schedule_meeting', you MUST collect: name, email, time, and reason.
     Don't repeat your intro if you've already said hello or hola.
-        
+
+    CALENDAR RELATED RULES:
+    1. 'Work from home' or 'WFH' = Gaby is FREE. You can book meetings during these times.
+    2. Any other event = Gaby is BUSY.
+    3. If a user asks for 'the next 3 days', look at the dates above and summarize only the next 3 days.
+    4. If someone wants to book a time that conflicts with a 'Busy' event, tell them she's unavailable.
+ 
     Today is {today}
     """
     
