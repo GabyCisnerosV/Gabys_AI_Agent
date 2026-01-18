@@ -29,26 +29,26 @@ def get_strava_stats():
         
         # Iterating through the Strava results
         for activity in activities:
-            # Check for 'Run' (Standard Strava type)
             if activity.type == 'Run':
-                # Convert distance from meters to km safely
-                dist_m = float(activity.distance) if activity.distance else 0
-                distance_km = dist_m / 1000
+                distance_km = float(activity.distance) / 1000 if activity.distance else 0
                 
-                # Handle moving time (stravalib returns a timedelta-like object)
-                if activity.moving_time:
-                    # total_seconds() is the most reliable way to get time
-                    time_minutes = activity.moving_time.total_seconds() / 60
+                # The Specific Fix for the Duration Error
+                if activity.moving_time is not None:
+                    # In many stravalib versions, Duration can be cast directly to float (seconds)
+                    try:
+                        time_minutes = float(activity.moving_time) / 60
+                    except:
+                        time_minutes = getattr(activity.moving_time, 'seconds', 0) / 60
                 else:
                     time_minutes = 0
                 
                 pace_min_per_km = time_minutes / distance_km if distance_km > 0 else 0
+                date_str = activity.start_date_local.strftime("%d %b %Y")
                 
-                # We store the raw datetime object for sorting later, and the string for display
                 runs.append({
                     'name': activity.name,
-                    'raw_date': activity.start_date_local, 
-                    'date_str': activity.start_date_local.strftime("%d %b %Y"),
+                    'date': date_str,
+                    'raw_date': activity.start_date_local, # Useful for sorting
                     'distance_km': distance_km,
                     'time_minutes': time_minutes,
                     'pace': pace_min_per_km
