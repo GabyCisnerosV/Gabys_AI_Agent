@@ -50,7 +50,6 @@ extra_instructions=f"""
         - If somebody asks what is shee doing x date or week dont be specific of hours and minutes.
 
 """
-
 #----------------------------------------------------------------------------------
 # 2. Sidebar & Dashboard UI
 st.sidebar.title(f"✨ {name}'s CV")

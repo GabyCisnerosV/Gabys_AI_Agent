@@ -34,7 +34,14 @@ def get_strava_stats():
         for activity in activities:
             if activity.type == 'Run':
                 distance_km = float(activity.distance) / 1000
-                time_minutes = activity.moving_time.total_seconds() / 60 if activity.moving_time else 0
+                
+                # FIX: Handle both Duration and timedelta objects
+                if hasattr(activity.moving_time, 'total_seconds'):
+                    time_minutes = activity.moving_time.total_seconds() / 60
+                else:
+                    # It's a Duration object - access seconds directly
+                    time_minutes = activity.moving_time.seconds / 60 if activity.moving_time else 0
+                
                 pace_min_per_km = time_minutes / distance_km if distance_km > 0 else 0
                 date_str = activity.start_date_local.strftime("%d %b %Y")
                 
