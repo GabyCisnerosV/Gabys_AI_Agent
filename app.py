@@ -11,10 +11,10 @@ cv_path="data/Gaby_CV.pdf"
 personal_facts="data/Gaby_Mind.txt"
 cv_filename="Gaby_Cisneros_V.pdf"
 context_data = {
-    f"CV: This is {name}'s updated CV": ai_t.get_cv_text(cv_path),
-    f"Strava: {name}'s recent fitness and running stats": get_strava_stats(),
-    f"Calendar: {name}'s upcoming availability and meetings": get_full_schedule(),
-    f"{name}'s facts":ai_t.read_text_file(personal_facts)
+    f"CV": ai_t.get_cv_text(cv_path),
+    f"Strava": get_strava_stats(),
+    f"Calendar": get_full_schedule(),
+    f"Facts":ai_t.read_text_file(personal_facts)
 }
 
 linkedin_user="gabrielacisneros"
@@ -48,14 +48,12 @@ extra_instructions=f"""
     Before calling 'schedule_meeting', you MUST collect: name, email, time, and reason.
     Don't repeat your intro if you've already said hello or hola.
 
-    CALENDAR RELATED RULES:
-    1. Tuesday and Wednesday she works from home. You can book meetings these day when there is no other event. You can also book events any other daays monday to friday if she does not have anything in her calendar.
-    2. ONLY use the calendar data provided to check availability and book meetings. 
-    3. If a date or event is NOT in that data, DO NOT make it up.
-    4. If somebody says what is she doing x day/week be general, just specify the day and number of day, not hours.
-    5. The week starts on Monday.
-    6. The subject of any meetings should always be professional.
-    7. You can guess if Gaby has a trip if her location is not Manchester or Chorley
+    CRITICAL CALENDAR RULES:
+        - Always, always check the calendar before agreeing on a date.
+        - Tuesday/Wednesday: {name} works from home (Generally free for meetings).
+        - If an event says 'All Day', she is 100% busy.
+        - Look at the dates in the calendar data. If a user says 'Tuesday the 25th' but the calendar shows the 25th is a Sunday, CORRECT them.
+        - Do not guess availability. If it's not in the data, ask for clarification.
 """
 #----------------------------------------------------------------------------------
 # 2. Sidebar & Dashboard UI
