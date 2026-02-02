@@ -7,7 +7,7 @@ from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 
-# Permission to READ and MODIFY the calendar
+# Permission to READ and MODIFY the calendar 
 SCOPES = ['https://www.googleapis.com/auth/calendar']
 
 # Pulling IDs from Secrets
