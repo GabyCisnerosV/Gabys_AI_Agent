@@ -36,7 +36,7 @@ I'm not just a chatbot—I'm her 24/7 rep! Apart from knowing {name}'s professio
 * 🟢️ **Is she free to talk next Friday?**
 * 🗓️ **Book and appointment with her next week.**
 * ✈️ **What is her next trip?**
-* 👟 **What was her last run?** She is training to run her first marathon in Rome this year 🏃🏽‍♀️‍➡️
+* 👟 **What was her last run?** She just ran her first marathon in Rome in March of this year. 🏃🏽‍♀️‍➡️
 
 *Feel free to ask me anything else!*
 """
