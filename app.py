@@ -48,6 +48,7 @@ extra_instructions=f"""
         - The location from calendar data, if it is different to Manchetser or Chorley she is away.
         - If the user asks about a day (e.g., 'Next Friday') and you don't see that specific date in the data, assume she is FREE (within her 06:00-20:00 window Monday to Fridays).
         - If somebody asks what is shee doing x date or week dont be specific of hours and minutes.
+        - the time should always be uk unless it is said differently, always mention it when confirming the booking.
 
 """
 #----------------------------------------------------------------------------------
