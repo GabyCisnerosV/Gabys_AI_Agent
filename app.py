@@ -84,23 +84,20 @@ ai_t.download_file_button(path=cv_path,filename=cv_filename,object="CV",name=nam
 st.title(f"🤖 {name}'s Agent")
 st.write(agents_description)
 
-# A. Initialize chat history if it doesn't exist
+# Start the conversation — the system message is hidden from the user, only the AI sees it
 if "messages" not in st.session_state:
-    # We add a 'system' message that the user NEVER sees, 
-    # but the AI reads every single time.
     st.session_state.messages = [
         {"role": "system", "content": f"{personality} IMPORTANT: You have already said hi and introduced yourself as {name}'s agent. Do not introduce yourself again. If the user hasn't provided their name yet, try to find a natural way to ask, but don't be repetitive."},
         {"role": "assistant", "content": initial_message}
     ]
 
-# Display chat messages from history on app rerun
-# IMPORTANT: Skip the 'system' message so the user doesn't see the instructions!
+# Show the chat history — skip the system message so the user only sees the actual conversation
 for message in st.session_state.messages:
-    if message["role"] != "system":  # <--- Add this check
+    if message["role"] != "system":
         with st.chat_message(message["role"]):
             st.markdown(message["content"])
 
-# B. React to user input
+# Handle new user messages
 if prompt := st.chat_input("Say something..."):
     st.chat_message("user").markdown(prompt)
     st.session_state.messages.append({"role": "user", "content": prompt})

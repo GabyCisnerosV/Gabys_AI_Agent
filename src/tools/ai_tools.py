@@ -40,8 +40,7 @@ def read_text_file(relative_path):
 
 def handle_tool_call(tool_call):
     """
-    Switchboard to execute the correct Python function 
-    based on what the AI requested.
+    Routes the AI's tool request to the right Python function.
     """
     function_name = tool_call.function.name
     args = json.loads(tool_call.function.arguments)
@@ -57,9 +56,10 @@ def handle_tool_call(tool_call):
 
     return "Tool not found."
 
-def get_agent_response(messages, data_bundle, personality,name, extra_instructions):
+def get_agent_response(messages, data_bundle, personality, name, extra_instructions):
     """
-    data_bundle should be a dict were the key is a description NAME: Description of the source and the values are the souces
+    Sends the full conversation to the AI along with all context data and returns the response.
+    data_bundle is a dict where keys are source names and values are the source content.
     """
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
     today=datetime.datetime.now().strftime("%A, %B %d, %Y")
