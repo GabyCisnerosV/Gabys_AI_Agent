@@ -1,59 +1,22 @@
 import streamlit as st
-import datetime
 from src.tools.strava_tools import get_strava_stats
 from src.tools.calendar_tools import get_full_schedule
 import src.tools.ai_tools as ai_t
+from config import (
+    name, cv_path, cv_filename, personal_facts,
+    linkedin_user, github_user,
+    personality, agents_description, initial_message, extra_instructions
+)
 
-#----------------------------------------------------------------------------------
-# 1. Setup & Data
-name="Gaby"
-cv_path="data/Gaby_CV.pdf"
-personal_facts="data/Gaby_Mind.txt"
-cv_filename="Gaby_Cisneros_V.pdf"
+# --- Load all context data the AI will use ---
 context_data = {
-    f"CV": ai_t.get_pdf_text(cv_path),
-    f"Strava": get_strava_stats(),
-    f"Calendar": get_full_schedule(),
-    f"Facts":ai_t.read_text_file(personal_facts)
+    "CV": ai_t.get_pdf_text(cv_path),
+    "Strava": get_strava_stats(),
+    "Calendar": get_full_schedule(),
+    "Facts": ai_t.read_text_file(personal_facts)
 }
 
-linkedin_user="gabrielacisneros"
-github_user="GabyCisnerosV"
-
-personality=f"You are a bubbly and nice agent, you are like {name} PR agent. You are kind, high energy, and always positive. " \
-f"You speak in british english. You never lie. You are trying to make people like {name}. "\
-f"If somebody asks about her career, {name} is happy in her current role and enjoys discussing data science, AI, and emerging tech opportunities."
-
-agents_description=f"""
-### Hi! I'm {name}'s AI Agent! ✨
-{name} is a **Data Scientist** based in Manchester, UK. 🐝
-
-I'm not just a chatbot—I'm her 24/7 rep! Apart from knowing {name}'s professional experience 🚀, I am connected in real-time with her **Google Calendar** 📅 and her **Strava** 🏃‍♀️.
-
-**Here are some ideas of things you can ask me:**
-* 💃🏽  **Who is {name}?**
-* 💼 **What is her professional experience?**
-* 🟢️ **Is she free to talk next Friday?**
-* 🗓️ **Book and appointment with her next week.**
-* ✈️ **What is her next trip?**
-* 👟 **What was her last run?** She just ran her first marathon in Rome in March of this year. 🏃🏽‍♀️‍➡️
-
-*Feel free to ask me anything else!*
-"""
-initial_message=f"Hola! I'm {name}'s AI agent, and I'm here to share all the wonderful things about {name}! Who am I speaking with today? ✨"
-
-extra_instructions=f"""
-    ### EXTRA CALENDAR RULES:
-        - In the office" events dont assume it is all day, she is normally free at lunch.
-        - The location from calendar data, if it is different to Manchetser or Chorley she is away.
-        - If the user asks about a day (e.g., 'Next Friday') and you don't see that specific date in the data, assume she is FREE (within her 06:00-20:00 window Monday to Fridays).
-        - If somebody asks what is shee doing x date or week dont be specific of hours and minutes.
-        - the time should always be uk unless it is said differently, always mention it when confirming the booking.
-
-"""
-#----------------------------------------------------------------------------------
-# 2. Sidebar & Dashboard UI
-# Using markdown to create clickable links with icons
+# --- Sidebar ---
 st.sidebar.markdown(f"📣 Connect with {name}")
 linkedin_icon = ai_t.get_image_as_base64("data/linkedin_icon.png")
 github_icon = ai_t.get_image_as_base64("data/github_icon.png")
@@ -62,7 +25,7 @@ st.sidebar.markdown(
     f"""
     <div style="display: flex; flex-direction: column; gap: 15px;">
         <a href="https://www.linkedin.com/in/{linkedin_user}/" target="_blank" style="text-decoration: none; color: inherit;">
-            <img src="data:image/png;base64,{linkedin_icon}" width="25" style="vertical-align:middle;"> 
+            <img src="data:image/png;base64,{linkedin_icon}" width="25" style="vertical-align:middle;">
             <span style="margin-left: 10px; font-weight: 500;">LinkedIn</span>
         </a>
         <a href="https://github.com/{github_user}" target="_blank" style="text-decoration: none; color: inherit;">
@@ -74,13 +37,11 @@ st.sidebar.markdown(
     unsafe_allow_html=True
 )
 
-st.sidebar.write("---") # separator line
-
+st.sidebar.write("---")
 st.sidebar.markdown(f"✨ {name}'s CV")
-ai_t.download_file_button(path=cv_path,filename=cv_filename,object="CV",name=name)
-#----------------------------------------------------------------------------------
-# 3. Chat interface
+ai_t.download_file_button(path=cv_path, filename=cv_filename, object="CV", name=name)
 
+# --- Chat interface ---
 st.title(f"🤖 {name}'s Agent")
 st.write(agents_description)
 
@@ -103,8 +64,8 @@ if prompt := st.chat_input("Say something..."):
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     with st.spinner("Give me a sec..."):
-        response = ai_t.get_agent_response(st.session_state.messages,context_data,personality,name,extra_instructions)
-    
+        response = ai_t.get_agent_response(st.session_state.messages, context_data, personality, name, extra_instructions)
+
     with st.chat_message("assistant"):
         st.markdown(response)
     st.session_state.messages.append({"role": "assistant", "content": response})
