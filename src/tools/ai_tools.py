@@ -9,8 +9,10 @@ from src.tools.calendar_tools import schedule_meeting
 from src.tools.definitions import AGENT_TOOLS
 
 @st.cache_data()
-def get_cv_text(pdf_path):
-    """Extracts text from PDF CV."""
+def get_pdf_text(pdf_path):
+    """
+    Extracts and returns all text from a PDF file.
+    """
     text = ""
     try:
         with open(pdf_path, "rb") as file:
@@ -19,7 +21,7 @@ def get_cv_text(pdf_path):
                 text += page.extract_text()
         return text
     except Exception as e:
-        return f"Error reading CV: {e}"
+        return f"Error reading PDF: {e}"
 
 @st.cache_data()
 def read_text_file(relative_path):
@@ -59,7 +61,7 @@ def handle_tool_call(tool_call):
 def get_agent_response(messages, data_bundle, personality, name, extra_instructions):
     """
     Sends the full conversation to the AI along with all context data and returns the response.
-    data_bundle is a dict where keys are source names and values are the source content.
+    data_bundle (dict) >>> keys are source names and values are the source content.
     """
     client = OpenAI(api_key=st.secrets["OPENAI_API_KEY"])
     today=datetime.datetime.now().strftime("%A, %B %d, %Y")

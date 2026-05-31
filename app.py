@@ -11,7 +11,7 @@ cv_path="data/Gaby_CV.pdf"
 personal_facts="data/Gaby_Mind.txt"
 cv_filename="Gaby_Cisneros_V.pdf"
 context_data = {
-    f"CV": ai_t.get_cv_text(cv_path),
+    f"CV": ai_t.get_pdf_text(cv_path),
     f"Strava": get_strava_stats(),
     f"Calendar": get_full_schedule(),
     f"Facts":ai_t.read_text_file(personal_facts)
