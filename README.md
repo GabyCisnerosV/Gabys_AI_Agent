@@ -24,8 +24,8 @@ The agent will remember your name, check for calendar conflicts (including trave
 
 
 ## 🚀 Making your own
-1.  Clone the repo and swap out my details in `app.py`.
-2. Tweak the personality prompts to match your own voice.
+1. Clone the repo and swap out the details in `config.py` — that's where the name, social links, personality, and prompts all live.
+2. Replace the data files in `/data` with your own CV and personal facts file.
 3. You'll need API keys for OpenAI, Strava, and Google Calendar.
 
 ### Configuration
